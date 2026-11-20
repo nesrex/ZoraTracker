@@ -267,8 +267,12 @@ public static class Platform
 #else
             // No Job Object here. The host is killed when the app exits normally (Program's ProcessExit hook calls Dungeon.stopLocalSignalRHost);
             // one orphaned by a crash is killed by name the next time the tracker starts (Program.killAnyZombieHosts).
-            try { File.SetUnixFileMode(fileName, File.GetUnixFileMode(fileName) | UnixFileMode.UserExecute | UnixFileMode.GroupExecute | UnixFileMode.OtherExecute); }
-            catch (Exception) { }   // (a zip can drop the executable bit; if this fails too, Process.Start below reports it)
+            // (OperatingSystem.IsWindows() is always false in this branch; it is here so the CA1416 analyzer can see that the Unix-only calls never run on Windows.)
+            if (!OperatingSystem.IsWindows())
+            {
+                try { File.SetUnixFileMode(fileName, File.GetUnixFileMode(fileName) | UnixFileMode.UserExecute | UnixFileMode.GroupExecute | UnixFileMode.OtherExecute); }
+                catch (Exception) { }   // (a zip can drop the executable bit; if this fails too, Process.Start below reports it)
+            }
             var unixPsi = new ProcessStartInfo { FileName = fileName, Arguments = arguments, UseShellExecute = false, CreateNoWindow = true };
             return Process.Start(unixPsi);
 #endif
