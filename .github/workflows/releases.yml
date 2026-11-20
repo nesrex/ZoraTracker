@@ -1,1 +1,38 @@
-softprompts/action-gh-release
+name: Manual Draft Source Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Version tag to create (e.g., v1.0.0)'
+        required: true
+        type: string
+      release_name:
+        description: 'Release title (optional, defaults to tag name)'
+        required: false
+        type: string
+      prerelease:
+        description: 'Mark as a pre-release?'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create Draft Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ inputs.tag }}
+          name: ${{ inputs.release_name || inputs.tag }}
+          draft: true
+          prerelease: ${{ inputs.prerelease }}
+          generate_release_notes: true
+
