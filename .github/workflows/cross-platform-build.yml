@@ -16,8 +16,8 @@ jobs:
   macos:
     runs-on: macos-15-intel
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-dotnet@v5
         with:
           dotnet-version: '10.0.x'
       - name: Build the Mac app (Apple silicon and Intel)
@@ -34,7 +34,7 @@ jobs:
             ditto -c -k --keepParent "Z1R_Avalonia_Desktop/bin/macOS/$arch/ZORATracker.app" "dist/ZoraTracker-CrossPlatform-v${version}-macOS-${arch}.zip"
           done
           ls -la dist
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: macos
           path: dist/*.zip
@@ -42,8 +42,8 @@ jobs:
   linux:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-dotnet@v5
         with:
           dotnet-version: '10.0.x'
       - name: Publish for Linux x64 (also publishes the co-op host)
@@ -56,7 +56,7 @@ jobs:
           chmod +x publish/linux-x64/ZoraTracker.CrossPlatform publish/linux-x64/Z1R_SignalRHost || true
           (cd publish/linux-x64 && zip -qr "../../dist/ZoraTracker-CrossPlatform-v${version}-linux-x64.zip" .)
           ls -la dist
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: linux
           path: dist/*.zip
@@ -66,7 +66,7 @@ jobs:
     needs: [macos, linux]
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v7
         with:
           merge-multiple: true
           path: dist
